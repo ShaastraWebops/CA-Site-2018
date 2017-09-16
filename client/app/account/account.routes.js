@@ -7,7 +7,8 @@ export default function routes($stateProvider) {
     url: '/login',
     template: require('./login/login.html'),
     controller: 'LoginController',
-    controllerAs: 'vm'
+    controllerAs: 'vm',
+    authenticate: false
   })
     .state('logout', {
       url: '/logout?referrer',
@@ -25,8 +26,22 @@ export default function routes($stateProvider) {
       url: '/signup',
       template: require('./signup/signup.html'),
       controller: 'SignupController',
-      controllerAs: 'vm'
+      controllerAs: 'vm',
+      authenticate: false
     })
+    .state('forgotpassword',{
+      url:'/forgotpassword',
+      template: require('./forgotPassword/forgotPassword.html'),
+      controller: 'fpController',
+      controllerAs:'vm'
+    })
+    .state('resetpassword', {
+        url: '/resetpassword/:email/:token',
+        // url: '/resetpassword',
+        template: require('./resetPassword/resetPassword.html'),
+        controller: 'rpController',
+        controllerAs:'vm'
+      })
     .state('settings', {
       url: '/settings',
       template: require('./settings/settings.html'),

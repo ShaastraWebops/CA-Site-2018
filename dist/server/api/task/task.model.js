@@ -31,6 +31,8 @@ var TaskSchema = new _mongoose.Schema({
   pending: [{ type: _mongoose.Schema.Types.ObjectId, ref: 'User'
   }],
   approved: [{ type: _mongoose.Schema.Types.ObjectId, ref: 'User'
+  }],
+  rejected: [{ type: _mongoose.Schema.Types.ObjectId, ref: 'User'
   }]
 });
 

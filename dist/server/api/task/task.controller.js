@@ -8,6 +8,7 @@ exports.apply = apply;
 exports.getusers = getusers;
 exports.show = show;
 exports.gettasks = gettasks;
+exports.reject = reject;
 exports.approve = approve;
 
 var _task = require('./task.model');
@@ -17,6 +18,10 @@ var _task2 = _interopRequireDefault(_task);
 var _user = require('../user/user.model');
 
 var _user2 = _interopRequireDefault(_user);
+
+var _mongoose = require('mongoose');
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -100,6 +105,29 @@ function gettasks(req, res) {
   }).catch(handleError(res));
 }
 
+function reject(req, res) {
+
+  var taskId = req.params.id;
+  var userid = req.body.userid;
+
+  _task2.default.findById(taskId).exec().then(function (task) {
+    if (!task) {
+      return res.json({ success: false, msg: 'no such task exists!' });
+    }
+    _task2.default.update({ _id: taskId }, { $addToSet: { rejected: userid } }, function (err, msg) {
+      if (err) throw err;
+      if (msg.nModified == 0) {
+        res.json({ success: false, msg: 'Already rejected!' });
+      } else {
+        _task2.default.update({ '_id': taskId }, { $pull: { 'approved': _mongoose2.default.Types.ObjectId(userid) } }, function (err, msg) {
+          if (err) throw err;
+          res.json({ success: true, msg: "Rejected!" });
+        });
+      }
+    });
+  });
+}
+
 function approve(req, res) {
 
   var taskId = req.params.id;
@@ -108,7 +136,7 @@ function approve(req, res) {
   _task2.default.findById(taskId).exec().then(function (task) {
     if (!task) {
 
-      return res.json({ success: false, msg: "no such tasks exists!" });
+      return res.json({ success: false, msg: "no such task exists!" });
     }
     var points = task.points;
     _task2.default.update({ _id: taskId }, { $addToSet: { approved: userid } }, function (err, msg) {
@@ -118,10 +146,13 @@ function approve(req, res) {
 
         res.json({ success: false, msg: 'Already approved!' });
       } else {
-        res.json({ success: true, msg: "Approved!" });
         _user2.default.update({ _id: userid }, { $inc: { points: points } }, function (err, msg) {
 
           if (err) throw err;
+        });
+        _task2.default.update({ '_id': taskId }, { $pull: { 'rejected': _mongoose2.default.Types.ObjectId(userid) } }, function (err, msg) {
+          if (err) throw err;
+          res.json({ success: true, msg: "Approved!" });
         });
       }
     });

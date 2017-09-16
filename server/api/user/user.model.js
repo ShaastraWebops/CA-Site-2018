@@ -84,7 +84,12 @@ var UserSchema = new Schema({
   },
   points: {type: Number, default: 0},
   facebook: {},
-  github: {}
+  github: {},
+  resetPasswordToken:{
+    type:String,
+    default:''},
+  resetPasswordExpires: {
+    type: Date }
 });
 
 /**

@@ -5,6 +5,12 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _defineProperty2 = require('babel-runtime/helpers/defineProperty');
+
+var _defineProperty3 = _interopRequireDefault(_defineProperty2);
+
+var _ref;
+
 var _crypto = require('crypto');
 
 var _crypto2 = _interopRequireDefault(_crypto);
@@ -19,9 +25,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 _mongoose2.default.Promise = require('bluebird');
 
+
 var authTypes = ['github', 'twitter', 'facebook', 'google'];
 
-var UserSchema = new _mongoose.Schema({
+var UserSchema = new _mongoose.Schema((_ref = {
   name: String,
   email: {
     type: String,
@@ -35,6 +42,7 @@ var UserSchema = new _mongoose.Schema({
     }
   },
   submitted: { type: Boolean, default: false },
+  selected: { type: Number, default: 0 }, //0 means decided, 1 means approvedand 2 means rejected
   role: {
     type: String,
     default: 'user'
@@ -90,11 +98,11 @@ var UserSchema = new _mongoose.Schema({
     why: String,
     right: String,
     past: String
-  },
-  points: { type: Number, default: 0 },
-  facebook: {},
-  github: {}
-});
+  }
+}, (0, _defineProperty3.default)(_ref, 'selected', {
+  type: Number,
+  default: 0
+}), (0, _defineProperty3.default)(_ref, 'points', { type: Number, default: 0 }), (0, _defineProperty3.default)(_ref, 'facebook', {}), (0, _defineProperty3.default)(_ref, 'github', {}), _ref));
 
 /**
  * Virtuals

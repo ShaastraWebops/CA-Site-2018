@@ -39,9 +39,9 @@ var validateJwt = (0, _expressJwt2.default)({
  * Otherwise returns 403
  */
 function isAuthenticated() {
-  return (0, _composableMiddleware2.default
+  return (0, _composableMiddleware2.default)()
   // Validate jwt
-  )().use(function (req, res, next) {
+  .use(function (req, res, next) {
     // allow access_token to be passed through query parameter as well
     if (req.query && req.query.hasOwnProperty('access_token')) {
       req.headers.authorization = 'Bearer ' + req.query.access_token;
@@ -51,9 +51,9 @@ function isAuthenticated() {
       req.headers.authorization = 'Bearer ' + req.cookies.token;
     }
     validateJwt(req, res, next);
-  }
+  })
   // Attach user to request
-  ).use(function (req, res, next) {
+  .use(function (req, res, next) {
     _user2.default.findById(req.user._id).exec().then(function (user) {
       if (!user) {
         return res.status(401).end();

@@ -9,9 +9,10 @@ import login from './login';
 import settings from './settings';
 import signup from './signup';
 import oauthButtons from '../../components/oauth-buttons';
+import forgotpassword from './forgotPassword';
+import resetpassword from './resetPassword';
 
-export default angular.module('caportalApp.account', [uiRouter, login, settings, signup,
-  oauthButtons
+export default angular.module('caportalApp.account', [uiRouter, login, settings, signup, forgotpassword, resetpassword, oauthButtons
 ])
   .config(routing)
   .run(function($rootScope) {

@@ -8,3 +8,4 @@ client/bower_components
 npm-debug.log
 coverage
 dist
+/client/assets/uploads

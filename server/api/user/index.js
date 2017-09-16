@@ -18,5 +18,6 @@ router.put('/submit', auth.isAuthenticated(), controller.submit);
 router.put('/selected/:id', auth.hasRole('admin'), controller.select);
 router.put('/rejected/:id', auth.hasRole('admin'), controller.reject);
 router.post('/', controller.create);
-
+router.post('/forgotpass', controller.forgotPassword);
+router.post('/resetpass/:email/:token', controller.resetPassword);
 module.exports = router;

@@ -22,6 +22,8 @@ router.get('/me', auth.isAuthenticated(), controller.me);
 router.put('/:id/password', auth.isAuthenticated(), controller.changePassword);
 router.get('/:id', auth.isAuthenticated(), controller.show);
 router.put('/submit', auth.isAuthenticated(), controller.submit);
+router.put('/selected/:id', auth.hasRole('admin'), controller.select);
+router.put('/rejected/:id', auth.hasRole('admin'), controller.reject);
 router.post('/', controller.create);
 
 module.exports = router;
