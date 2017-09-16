@@ -15,6 +15,8 @@ exports.reject = reject;
 exports.changePassword = changePassword;
 exports.me = me;
 exports.authCallback = authCallback;
+exports.forgotPassword = forgotPassword;
+exports.resetPassword = resetPassword;
 
 var _user = require('./user.model');
 
@@ -32,6 +34,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var json2csv = require('json2csv');
 var request = require("request");
+var crypto = require('crypto');
 
 function validationError(res, statusCode) {
   statusCode = statusCode || 422;
@@ -257,6 +260,7 @@ function me(req, res, next) {
       return res.status(401).end();
     }
     res.json(user);
+    return;
   }).catch(function (err) {
     return next(err);
   });
@@ -267,5 +271,114 @@ function me(req, res, next) {
  */
 function authCallback(req, res) {
   res.redirect('/');
+}
+
+function forgotPassword(req, res, next) {
+  console.log("Came here forgot password");
+  crypto.randomBytes(25, function (err, buf) {
+    if (err) {
+      return handleError(res, err);
+    }
+    var token = buf.toString('hex');
+    // console.log("token : ",token, " \n mail", req.body.email);
+    _user2.default.findOne({ email: req.body.email }).then(function (user, err) {
+      if (err) {
+        return handleError(res, err);
+      }
+      if (!user) {
+        return res.status(404).end();
+      }
+      console.log("Came here user find", user.name);
+
+      user.resetPasswordToken = token;
+      user.resetPasswordExpires = Date.now() + 1800000; // half an hour to reset
+      user.save().then(function (user) {
+        console.log("Came here user.save", user.name);
+
+        var options = { method: 'POST',
+          url: 'https://api.sendgrid.com/v3/mail/send',
+          headers: { 'content-type': 'application/json',
+            authorization: 'Bearer ' + process.env.CASITE },
+          body: { personalizations: [{ to: [{ email: user.email, name: user.name }],
+              subject: 'Shaastra 2018 || Campus Ambassador' }],
+            from: { email: 'support@shaastra.org', name: 'Student Relations, Shaastra' },
+            //reply_to: { email: 'sam.smith@example.com', name: 'Sam Smith' },
+            subject: 'Shaastra 2018 || Campus Ambassador',
+            content: [{ type: 'text/html',
+              value: "<table style=\"background-color: #f3f3f3; font-family: verdana, tahoma, sans-serif; color: black; padding: 30px;\">" + "<tr> <td>" + "<h2>Hello " + user.name + ",</h2>" + "<p>Greetings from Shaastra-2017 team.</p>" + "<p>You have received this email since you have requested for password change for your Shaastra account.</p>" + "<p>Please click on the following link, or paste this into your browser to complete the process:" + "<p> ca.shaastra.org/resetpassword/" + user.email + "/" + token + "</p>" +
+              // "<p>http://shaastra.org/#/reset-password/" + token + "</p>" +
+              "<p>If you did not request this, please ignore this email and your password will remain unchanged.</p>" + "Best,<br/> Shaastra 2017 team</p> </td> </tr> </table>" }] },
+          json: true };
+
+        request(options, function (error, response, body) {
+          if (error) throw new Error(error);
+          console.log("Came here req body");
+          return res.json({ success: true, message: 'Password Reset Mail Sent to' + req.body.email });
+
+          //console.log(response);
+        });
+      }); //user.save()
+    }); //user.find()
+  }); //random bytes
+  //random bytes
+  return;
+} //forget password
+
+/**
+ * Resets the password of the user
+ *
+ * @param  {[type]} req [description]
+ * @param  {[type]} res [description]
+ * @return {[type]}     [description]
+ */
+function resetPassword(req, res) {
+  console.log("reset password\n\n", req.params);
+  // console.log(req.body.newPassword);//Severe Breach of Security Not me :P
+
+  _user2.default.findOne({ resetPasswordToken: req.params.token, email: req.params.email, resetPasswordExpires: { $gt: Date.now() } }).then(function (user, err) {
+    // User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }).then((err, user)=>{
+
+    console.log("\n user", user, "\nerr ", err);
+    if (err) {
+      return handleError(res, err);
+    }
+    if (!user) {
+      console.log("err !user reset password", user);
+      return res.sendStatus(404);
+    }
+    console.log("no error in findone");
+    user.password = req.body.newPassword;
+    user.resetPasswordToken = '';
+    // user.updatedOn = Date.now();
+
+
+    user.save().then(function (user) {
+      console.log("save pass err", err, "user,", user);
+      if (err) {
+        return handleError(res, err);
+      }
+      var options = { method: 'POST',
+        url: 'https://api.sendgrid.com/v3/mail/send',
+        headers: { 'content-type': 'application/json',
+          authorization: 'Bearer ' + process.env.CASITE },
+        body: { personalizations: [{ to: [{ email: user.email, name: user.name }],
+            subject: 'Shaastra 2018 || Campus Ambassador' }],
+          from: { email: 'support@shaastra.org', name: 'Student Relations, Shaastra' },
+          //reply_to: { email: 'sam.smith@example.com', name: 'Sam Smith' },
+          subject: 'Shaastra 2018 || Campus Ambassador',
+          content: [{ type: 'text/html',
+            value: "<table style=\"background-color: #f3f3f3; font-family: verdana, tahoma, sans-serif; color: black; padding: 30px;\">" + "<tr> <td>" + "<h2>Hello " + user.name + ",</h2>" + "<p>Greetings from Shaastra-2017 team.</p>" + "<p>This is a confirmation that the password for your account <b>" + user.email + "</b> has just been changed</p>" + "Best,<br/> Shaastra 2017 team</p> </td> </tr> </table>" }] },
+        json: true };
+
+      request(options, function (error, response, body) {
+        if (error) throw new Error(error);
+        console.log("\n\nEnd of reset");
+        return res.json({ success: true, message: 'successfully changed Password' });
+
+        //console.log(response);
+      });
+    }); //User.save();
+  });
+  return;
 }
 //# sourceMappingURL=user.controller.js.map

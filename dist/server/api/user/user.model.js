@@ -102,7 +102,10 @@ var UserSchema = new _mongoose.Schema((_ref = {
 }, (0, _defineProperty3.default)(_ref, 'selected', {
   type: Number,
   default: 0
-}), (0, _defineProperty3.default)(_ref, 'points', { type: Number, default: 0 }), (0, _defineProperty3.default)(_ref, 'facebook', {}), (0, _defineProperty3.default)(_ref, 'github', {}), _ref));
+}), (0, _defineProperty3.default)(_ref, 'points', { type: Number, default: 0 }), (0, _defineProperty3.default)(_ref, 'facebook', {}), (0, _defineProperty3.default)(_ref, 'github', {}), (0, _defineProperty3.default)(_ref, 'resetPasswordToken', {
+  type: String,
+  default: '' }), (0, _defineProperty3.default)(_ref, 'resetPasswordExpires', {
+  type: Date }), _ref));
 
 /**
  * Virtuals

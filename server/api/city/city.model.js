@@ -13,7 +13,7 @@ var CitySchema = new mongoose.Schema({
   	}
   }],
   suggestions: [{
-  	name: String, default:" "}]
+  	type: String, default:" "}]
 });
 
 registerEvents(CitySchema);

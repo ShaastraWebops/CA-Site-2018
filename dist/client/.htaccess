@@ -50,6 +50,7 @@
     </FilesMatch>
 </IfModule>
 
+
 # ##############################################################################
 # # ERRORS                                                                     #
 # ##############################################################################
@@ -73,6 +74,7 @@ Options -MultiViews
 # http://httpd.apache.org/docs/current/mod/core.html#errordocument), e.g.:
 
 ErrorDocument 404 /404.html
+
 
 # ##############################################################################
 # # INTERNET EXPLORER                                                          #
@@ -115,6 +117,7 @@ ErrorDocument 404 /404.html
 # BrowserMatch "Mozilla/4.[0-9]{2}" brokenvary=1
 # BrowserMatch "Opera" !brokenvary
 # SetEnvIf brokenvary 1 force-no-vary
+
 
 # ##############################################################################
 # # MIME TYPES AND ENCODING                                                    #
@@ -186,6 +189,7 @@ AddDefaultCharset utf-8
     AddCharset utf-8 .atom .css .js .json .rss .vtt .webapp .xml
 </IfModule>
 
+
 # ##############################################################################
 # # URL REWRITES                                                               #
 # ##############################################################################
@@ -235,8 +239,6 @@ AddDefaultCharset utf-8
 <IfModule mod_rewrite.c>
     RewriteCond %{HTTPS} !=on
     RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
-RewriteCond %{REQUEST_URI} !^/[0-9]+\..+\.cpaneldcv$
-RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
     RewriteRule ^ http://%1%{REQUEST_URI} [R=301,L]
 </IfModule>
 
@@ -252,6 +254,7 @@ RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ 
 #    RewriteCond %{HTTP_HOST} !^www\..+$ [NC]
 #    RewriteRule ^ http://www.%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 # </IfModule>
+
 
 # ##############################################################################
 # # SECURITY                                                                   #
@@ -301,8 +304,6 @@ RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ 
 <IfModule mod_rewrite.c>
     RewriteCond %{SCRIPT_FILENAME} -d [OR]
     RewriteCond %{SCRIPT_FILENAME} -f
-RewriteCond %{REQUEST_URI} !^/[0-9]+\..+\.cpaneldcv$
-RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
     RewriteRule "(^|/)\." - [F]
 </IfModule>
 
@@ -356,6 +357,7 @@ RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ 
 # ADD THIS DIRECTIVE IN THE `httpd.conf` AS IT WILL NOT WORK IN THE `.htaccess`!
 
 # ServerTokens Prod
+
 
 # ##############################################################################
 # # WEB PERFORMANCE                                                            #
@@ -539,9 +541,3 @@ FileETag None
 # <IfModule mod_headers.c>
 #    Header set Connection Keep-Alive
 # </IfModule>
-RewriteCond %{HTTP_HOST} ^ca\.shaastra\.org$ [OR]
-RewriteCond %{HTTP_HOST} ^www\.ca\.shaastra\.org$
-RewriteCond %{REQUEST_URI} !^/[0-9]+\..+\.cpaneldcv$
-RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
-RewriteRule ^/?$ "http\:\/\/shaastra\.org\:8080" [R=301,L]
-
