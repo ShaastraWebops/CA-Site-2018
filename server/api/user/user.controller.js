@@ -75,7 +75,7 @@ export function create(req, res) {
            authorization: 'Bearer ' + process.env.CASITE },
         body:
         { personalizations:
-           [ { to: [ { email: user.email, name: 'Akshay' } ],
+           [ { to: [ { email: user.email } ],
                subject: 'Shaastra 2018 || Campus Ambassador' } ],
           from: { email: 'studentrelations@shaastra.org', name: 'Student Relations, Shaastra' },
           //reply_to: { email: 'sam.smith@example.com', name: 'Sam Smith' },
@@ -292,16 +292,16 @@ export function forgotPassword (req, res, next) {
     var token = buf.toString('hex');
     // console.log("token : ",token, " \n mail", req.body.email);
     User.findOne({ email: req.body.email }).then( (user, err)=> {
-      if(err) { 
+      if(err) {
         return handleError(res, err); }
-      if(!user) { 
+      if(!user) {
         return res.status(404).end(); }
   console.log("Came here user find", user.name);
 
       user.resetPasswordToken = token;
       user.resetPasswordExpires = Date.now() + 1800000; // half an hour to reset
       user.save()
-        .then(user => { 
+        .then(user => {
   console.log("Came here user.save",user.name);
 
           var options = { method: 'POST',
