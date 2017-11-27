@@ -33,16 +33,10 @@
     </div>
     <div uib-collapse="$ctrl.isCollapsed" class="navbar-collapse collapse" id="navbar-main">
       <ul class="nav navbar-nav">
-        <li><a href="/#one">Why</a></li>
-          <li><a href="/#two">How</a></li>
-          <li><a href="/#three">What</a></li>
-          <li><a href="/#four">Responsibilities</a></li>
-          <li><a href="/#five">T&C</a></li>
-          <li><a href="/#six">Contact Us</a></li>
         <!-- <li ng-show="$ctrl.isAdmin()" ui-sref-active="active"><a ui-sref="admin">Admin</a></li> -->
         <li ng-show="$ctrl.isAdmin()"><a href="/list">Registered Users</a></li>
-      <!--  <li ng-show="$ctrl.isAdmin()"><a href="/admintasks">Tasks Page</a></li>
-        <li ng-show="!$ctrl.isAdmin()&&$ctrl.isLoggedIn()"><a href="/usertasks">Tasks</a></li> -->
+       <li ng-show="$ctrl.isAdmin()"><a href="/admintasks">Tasks Page</a></li>
+        <li ng-show="!$ctrl.isAdmin()&&$ctrl.isLoggedIn()"><a href="/usertasks">Tasks</a></li>
       </ul>
 
       <ul class="nav navbar-nav navbar-right">
