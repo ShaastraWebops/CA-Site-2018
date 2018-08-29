@@ -29,7 +29,7 @@ export function uploadFile(req, res) {
     }
     User.findOne({_id: user},function(err,user){
       if(err) throw err;
-      user.files.push({
+      user.files = user.files.concat({
         taskid: task,
         name: saveWithName
       });
